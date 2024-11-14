@@ -5,6 +5,11 @@ Visualizer::Visualizer() : window(sf::VideoMode(800, 600), "Sort Visualizer")
     //  Set the window to close when the close button is clicked
     window.setFramerateLimit(60);
 
+    BAR_WIDTH = window.getSize().x / ARRAY_SIZE;
+    
+    SCREEN_HEIGHT = window.getSize().y;
+    PIXELS = SCREEN_HEIGHT / ARRAY_SIZE;
+
     //  Fill the vector with numbers from 1-100
     for (int i = 1; i <= ARRAY_SIZE; i++)
     {
@@ -20,12 +25,13 @@ void Visualizer::run()
 {
     //  print the shuffled numbers
     // DEBUGGING STUFF START
+    std::cout << "Unsorted: ";
     for (auto n : arr)
     {
         std::cout << n << " ";
     }
-    std::cout << std::endl;
-    std::cout << "Array size: " << arr.size() << std::endl;
+    // std::cout << std::endl;
+    std::cout << "\nArray size: " << arr.size() << std::endl;
     // DEBUGGING STUFF END
 
     while (window.isOpen())
@@ -40,6 +46,7 @@ void Visualizer::run()
                 if (event.key.code == sf::Keyboard::Space) 
                 {
                     bubbleSort();
+                    std::cout << "Sorted: ";
                     for (auto n : arr) {
                         std::cout << n << " ";
                     }
@@ -56,10 +63,9 @@ void Visualizer::run()
 
 void Visualizer::drawArray() {
     window.clear(sf::Color::Black);
-    for (auto bar : bars)
+    for (auto& pole : bars)
     {
-        // drawBar(i);
-        window.draw(bar.second);
+        window.draw(pole.second);
     }
     window.display();
 }
@@ -68,15 +74,15 @@ void Visualizer::drawBar()
 {
     bars.clear();
     for (size_t index = 0; index < ARRAY_SIZE; index++) {
-        sf::RectangleShape rectangle(sf::Vector2f(BAR_WIDTH, arr[index] * 10));
+        sf::RectangleShape rectangle(sf::Vector2f(BAR_WIDTH - GAP, arr[index] * PIXELS));   
         rectangle.setOutlineThickness(0.5);
         rectangle.setOutlineColor(sf::Color::White);
         rectangle.setFillColor(sf::Color::Red);
-        rectangle.setPosition(index * BAR_WIDTH, window.getSize().y - arr[index] * 10);
+        rectangle.setPosition(index * BAR_WIDTH, window.getSize().y - arr[index] * PIXELS);
         
-        // push the rectangle into vector of bars
-        bars.push_back(std::make_pair(arr[index], rectangle));
-        
+        // Push the rectangle into our hash map
+        bars[index] = rectangle;
+
         window.draw(rectangle);
     }
 }
@@ -86,36 +92,67 @@ void Visualizer::bubbleSort() {
     for (int i = 0; i < ARRAY_SIZE - 1; i++) {
         swapped = false;
         for (int current = 0; current < ARRAY_SIZE - i - 1; current++) {
+            // Optional: Highlight the bars being swapped
+            bars[current].setFillColor(sf::Color::Blue);
+            bars[current + 1].setFillColor(sf::Color::Blue);
+
+            // draw the array
+            drawArray();
+
+            // add a little delay to show the visual process
+            sf::sleep(sf::milliseconds(50));
+
             if (arr[current] > arr[current + 1]) {
-                // swappimg the vector with numbers only
-                std::swap(arr[current], arr[current+1]);
+                // swap the values in the vector containing numbers only
+                std::swap(arr[current], arr[current + 1]);
                 swapped = true;
-                // swapping the bars vecrot tha contains the pair or number and its corresponding bar
-                std::swap(bars[current], bars[current + 1]);
 
-                // highlight the bigger bar
-                // bars[current + 1].second.setFillColor(sf::Color::Blue);
+                // Update the rectangles' heights and positions in bars
+                bars[current].setSize(sf::Vector2f(BAR_WIDTH, arr[current] * PIXELS));
+                bars[current + 1].setSize(sf::Vector2f(BAR_WIDTH, arr[current + 1] * PIXELS));
 
-                // update the positions of the swapped bars in the vector
-                bars[current].second.setPosition(current * BAR_WIDTH, window.getSize().y - arr[current] * 10);
-                bars[current + 1].second.setPosition((current + 1)* BAR_WIDTH, window.getSize().y - arr[current + 1] * 10);
-
-                drawArray();
-                sf::sleep(sf::milliseconds(50));
+                // Update positions of the bars
+                bars[current].setPosition((current * BAR_WIDTH) - GAP, window.getSize().y - arr[current] * PIXELS);
+                bars[current + 1].setPosition(((current + 1) * BAR_WIDTH) - GAP, window.getSize().y - arr[current + 1] * PIXELS);
             }
+            // Reset colors after comparison
+            bars[current].setFillColor(sf::Color::Red);
+            bars[current + 1].setFillColor(sf::Color::Red);
+
+            // Reapply outline properties to ensure visibility
+            bars[current].setOutlineThickness(1.0);
+            bars[current].setOutlineColor(sf::Color::White);
+            bars[current + 1].setOutlineThickness(1.0);
+            bars[current + 1].setOutlineColor(sf::Color::White);
+
+            // Draw the array with updated positions and colors
+            drawArray();
+            sf::sleep(sf::milliseconds(50)); // Additional delay for swap visualization
         }
-        // If no swaps were made, the array is already sorted
         if (!swapped) {
             break;
         }
     }
+    greenSwoop();
 
-    // for (auto n : arr) {
-    //     std::cout << n << " ";
-    // }
 }
 
 void Visualizer::mergeSort() {}
 
 void Visualizer::quickSort(){}
+
+
+void Visualizer::greenSwoop() {
+    for(int i = 0; i < ARRAY_SIZE; i++) {
+        bars[i].setFillColor(sf::Color::Green);
+        bars[i + 1].setFillColor(sf::Color::Green);
+        bars[i + 2].setFillColor(sf::Color::Green);
+        drawArray();
+        sf::sleep(sf::milliseconds(20));
+
+        bars[i].setFillColor(sf::Color::Red);
+        drawArray();
+        sf::sleep(sf::milliseconds(20));
+    }
+}
 

@@ -23,14 +23,19 @@ public:
     // void shuffleArray();
 
 private:
-
+    void greenSwoop();
     sf::RenderWindow window;
     sf::Clock clock;
     std::vector<int> arr;    
-    std::vector<std::pair<int, sf::RectangleShape>> bars;
+    // std::vector<std::pair<int, sf::RectangleShape>> bars;
 
-    static const int ARRAY_SIZE = 50;
-    static const int BAR_WIDTH = 16;
+    std::unordered_map<int, sf::RectangleShape> bars;
+
+    static const int ARRAY_SIZE = 15;
+    int BAR_WIDTH;
+    int SCREEN_HEIGHT;
+    int PIXELS;
+    const int GAP = 1;  // jsut to keep some gap between the poles
 };
 
 #endif // VISUALIZER_HPP
