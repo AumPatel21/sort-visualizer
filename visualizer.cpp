@@ -6,7 +6,6 @@ Visualizer::Visualizer() : window(sf::VideoMode(800, 600), "Sort Visualizer")
     window.setFramerateLimit(60);
 
     BAR_WIDTH = window.getSize().x / ARRAY_SIZE;
-    
     SCREEN_HEIGHT = window.getSize().y;
     PIXELS = SCREEN_HEIGHT / ARRAY_SIZE;
 
@@ -15,6 +14,7 @@ Visualizer::Visualizer() : window(sf::VideoMode(800, 600), "Sort Visualizer")
     {
         arr.push_back(i);
     }
+
     std::srand(std::time(nullptr));
     //  randomize the numbers   
     std::random_shuffle(arr.begin(), arr.end());
@@ -43,7 +43,7 @@ void Visualizer::run()
                 window.close();
             }
             if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::Space) 
+                if (event.key.code == sf::Keyboard::B) 
                 {
                     bubbleSort();
                     std::cout << "Sorted: ";
@@ -52,6 +52,24 @@ void Visualizer::run()
                     }
                     std::cout << std::endl;
                 } 
+                if (event.key.code == sf::Keyboard::S) 
+                {
+                    selectionSort();
+                    std::cout << "Sorted: ";
+                    for (auto n : arr) {
+                        std::cout << n << " ";
+                    }
+                    std::cout << std::endl;
+                }
+                if (event.key.code == sf::Keyboard::I) 
+                {
+                    insertionSort();
+                    std::cout << "Sorted: ";
+                    for (auto n : arr) {
+                        std::cout << n << " ";
+                    }
+                    std::cout << std::endl;
+                }
                 else if (event.key.code == sf::Keyboard::Escape) {
                     window.close();
                 }
@@ -100,7 +118,7 @@ void Visualizer::bubbleSort() {
             drawArray();
 
             // add a little delay to show the visual process
-            sf::sleep(sf::milliseconds(50));
+            sf::sleep(sf::milliseconds(sleepTime));
 
             if (arr[current] > arr[current + 1]) {
                 // swap the values in the vector containing numbers only
@@ -127,14 +145,103 @@ void Visualizer::bubbleSort() {
 
             // Draw the array with updated positions and colors
             drawArray();
-            sf::sleep(sf::milliseconds(50)); // Additional delay for swap visualization
+            sf::sleep(sf::milliseconds(sleepTime)); // Additional delay for swap visualization
         }
         if (!swapped) {
             break;
         }
     }
     greenSwoop();
+}
 
+void Visualizer::selectionSort() {
+    int minIndex;
+    for (int i = 0; i < ARRAY_SIZE - 1; i++) {
+        // Assume that the first index is the minimum value
+        minIndex = i;
+
+        // Highlight the bars being compared and swapped
+        bars[i].setFillColor(sf::Color::Blue);
+        drawArray();
+        sf::sleep(sf::milliseconds(sleepTime));
+
+        for (int j = i + 1; j < ARRAY_SIZE; j++) {
+            // Highlight the bars being compared and swapped
+            bars[j].setFillColor(sf::Color::Blue);
+            drawArray();
+            sf::sleep(sf::milliseconds(sleepTime));
+
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+
+            bars[j].setFillColor(sf::Color::Red);
+        }
+        // swap the current index with the newly found minimum index
+        std::swap(arr[i], arr[minIndex]);
+
+
+        bars[i].setSize(sf::Vector2f(BAR_WIDTH, arr[i] * PIXELS));
+        bars[minIndex].setSize(sf::Vector2f(BAR_WIDTH, arr[minIndex] * PIXELS));
+
+        bars[i].setPosition(((i * BAR_WIDTH) - GAP), window.getSize().y - arr[i] * PIXELS);
+        bars[minIndex].setPosition(((minIndex * BAR_WIDTH) - GAP), window.getSize().y - arr[minIndex] * PIXELS);
+
+        // Reset colors after comparison
+        bars[i].setFillColor(sf::Color::Red);
+        bars[minIndex].setFillColor(sf::Color::Red);
+
+        // Reapply outline properties to ensure visibility
+        bars[i].setOutlineThickness(1.0);
+        bars[i].setOutlineColor(sf::Color::White);
+        bars[minIndex].setOutlineThickness(1.0);
+        bars[minIndex].setOutlineColor(sf::Color::White);
+
+        // Draw the array with updated positions and colors
+        drawArray();
+        sf::sleep(sf::milliseconds(sleepTime)); // Additional delay for swap visualization
+    }
+    greenSwoop();
+}
+
+
+// FIXME
+void Visualizer::insertionSort() {
+    for (int i = 1; i < ARRAY_SIZE; i++) {
+        int key = arr[i];
+        int j = i - 1;
+
+        // Highlight the key element being inserted
+        bars[i].setFillColor(sf::Color::Yellow);
+        drawArray();
+        sf::sleep(sf::milliseconds(sleepTime));
+
+        while (j >= 0 && arr[j] > key) {
+            bars[j].setFillColor(sf::Color::Blue);
+            drawArray();
+            sf::sleep(sf::milliseconds(sleepTime));
+            
+            arr[j + 1] = arr[j];
+
+            bars[j+i].setSize(sf::Vector2f(BAR_WIDTH, arr[j + 1] * PIXELS));
+            bars[j + 1].setPosition(((j + 1) * BAR_WIDTH) - GAP, window.getSize().y - arr[j + 1] * PIXELS);
+
+            j--;
+        }
+        arr[j + 1] = key;
+
+        // Update the position of the key element in the visualizer
+        bars[j + 1].setSize(sf::Vector2f(BAR_WIDTH, key * PIXELS));
+        bars[j + 1].setPosition(((j + 1) * BAR_WIDTH) - GAP, window.getSize().y - key * PIXELS);
+
+        for(int k = 0; k < i; k++) {
+            bars[k].setFillColor(sf::Color::Red);
+        }
+        drawArray();
+        sf::sleep(sf::milliseconds(sleepTime));
+    }
+
+    greenSwoop();
 }
 
 void Visualizer::mergeSort() {}
@@ -142,8 +249,9 @@ void Visualizer::mergeSort() {}
 void Visualizer::quickSort(){}
 
 
+// just for satisfaction
 void Visualizer::greenSwoop() {
-    for(int i = 0; i < ARRAY_SIZE; i++) {
+    for(int i = 0; i < ARRAY_SIZE - 2; i++) {
         bars[i].setFillColor(sf::Color::Green);
         bars[i + 1].setFillColor(sf::Color::Green);
         bars[i + 2].setFillColor(sf::Color::Green);
@@ -151,6 +259,8 @@ void Visualizer::greenSwoop() {
         sf::sleep(sf::milliseconds(20));
 
         bars[i].setFillColor(sf::Color::Red);
+        bars[i + 1].setFillColor(sf::Color::Red);
+        bars[i + 2].setFillColor(sf::Color::Red);
         drawArray();
         sf::sleep(sf::milliseconds(20));
     }

@@ -7,16 +7,16 @@ DEPS = visualizer.hpp visualizer.cpp main.cpp
 
 .PHONY: all visualizer clean
 
-all: visualizer
+all: run
 
 %.o: %.cpp $(DEPS)
 	$(CC) $(CFLAGS) -c $<
 
-visualizer: visualizer.o main.o
+run: visualizer.o main.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIB)
 
 clean:
-	rm *.o visualizer
+	rm *.o run
 
 lint:
 	*.cpp *.hpp

@@ -18,6 +18,8 @@ public:
     void drawBar();
     void drawArray();
     void bubbleSort();
+    void selectionSort();
+    void insertionSort();
     void mergeSort();
     void quickSort();
     // void shuffleArray();
@@ -31,11 +33,12 @@ private:
 
     std::unordered_map<int, sf::RectangleShape> bars;
 
-    static const int ARRAY_SIZE = 15;
+    static const int ARRAY_SIZE = 10;
     int BAR_WIDTH;
     int SCREEN_HEIGHT;
     int PIXELS;
     const int GAP = 1;  // jsut to keep some gap between the poles
+    const int sleepTime = 100;
 };
 
 #endif // VISUALIZER_HPP
