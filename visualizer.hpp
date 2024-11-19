@@ -26,10 +26,10 @@ public:
 
 private:
     void greenSwoop();
+    void randomArrayGenreator();
     sf::RenderWindow window;
     sf::Clock clock;
-    std::vector<int> arr;    
-    // std::vector<std::pair<int, sf::RectangleShape>> bars;
+    std::vector<int> arr;
 
     std::unordered_map<int, sf::RectangleShape> bars;
 
@@ -37,8 +37,14 @@ private:
     int BAR_WIDTH;
     int SCREEN_HEIGHT;
     int PIXELS;
-    const int GAP = 1;  // jsut to keep some gap between the poles
+    const int GAP = 1; // jsut to keep some gap between the poles
     const int sleepTime = 100;
+
+    // custom colors
+    sf::Color LIGHTBLUE = sf::Color(26, 117, 159);
+    sf::Color ORANGE = sf::Color(241, 143, 1);
+    sf::Color GREEN = sf::Color(112, 224, 0);
+    sf::Color RED = sf::Color(140, 28, 19);
 };
 
 #endif // VISUALIZER_HPP
