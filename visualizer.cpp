@@ -9,16 +9,7 @@ Visualizer::Visualizer() : window(sf::VideoMode(800, 600), "Sort Visualizer")
     SCREEN_HEIGHT = window.getSize().y;
     PIXELS = SCREEN_HEIGHT / ARRAY_SIZE;
 
-    //  Fill the vector with numbers from 1-100
-    for (int i = 1; i <= ARRAY_SIZE; i++)
-    {
-        arr.push_back(i);
-    }
-
-    std::srand(std::time(nullptr));
-    //  randomize the numbers
-    std::random_shuffle(arr.begin(), arr.end());
-    drawBar();
+    randomArrayGenreator();
 }
 
 void Visualizer::run()
@@ -224,8 +215,6 @@ void Visualizer::selectionSort()
     greenSwoop();
 }
 
-// INCOMPLETE complete the implementation
-// FIXME
 void Visualizer::insertionSort()
 {
     for (int i = 1; i < ARRAY_SIZE; i++)
@@ -272,7 +261,11 @@ void Visualizer::insertionSort()
     greenSwoop();
 }
 
-void Visualizer::mergeSort() {}
+void Visualizer::mergeSort(std::vector<int>) {
+    if (arr.size()  == 0 || arr.size() == 1) {
+        return;
+    }
+}
 
 void Visualizer::quickSort() {}
 
@@ -295,15 +288,16 @@ void Visualizer::greenSwoop()
     }
 }
 
-// FIXME
 void Visualizer::randomArrayGenreator()
 {
-    //  Fill the vector with numbers from 1-100
+    // remove the old numbers
+    arr.clear();
+    //  Fill the vector with numbers from 1 to ARRAY_SIZE 
     for (int i = 1; i <= ARRAY_SIZE; i++)
     {
         arr.push_back(i);
     }
-
+    // Make sure the shuffle is random every time
     std::srand(std::time(nullptr));
     //  randomize the numbers
     std::random_shuffle(arr.begin(), arr.end());

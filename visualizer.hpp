@@ -20,10 +20,8 @@ public:
     void bubbleSort();
     void selectionSort();
     void insertionSort();
-    void mergeSort();
+    void mergeSort(std::vector<int>);
     void quickSort();
-    // void shuffleArray();
-
 private:
     void greenSwoop();
     void randomArrayGenreator();

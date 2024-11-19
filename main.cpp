@@ -3,6 +3,15 @@
 int main()
 {
     Visualizer visualizer;
+    // int array_size;
+    // std::cout << "\nWelcome to my Sorting Visualizer!\n";
+    // std::cout << "All sorting algorithms are associated with a letter on the keyboard:\n";
+    // std::cout << "Press \n B to run Bubble sort.\n S to run Selection Sort.\n I to run Insertion Sort.\n M to run Merge Sort.\n Q to run Quick Sort.\n";
+    // std::cout << "\nTo reset, press R.\n\n";
+
+    // std::cout << "Please enter the array size you want to visualize: ";
+    // std::cin >> array_size;
+
     visualizer.run();
 
     // // make an 8x8 rectangle
