@@ -1,29 +1,28 @@
 #include "visualizer.hpp"
 
-Visualizer::Visualizer() : window(sf::VideoMode(800, 600), "Sort Visualizer")
+Visualizer::Visualizer(int arrSize) : window(sf::VideoMode(800, 600), "Sort Visualizer"), ARRAY_SIZE(arrSize), isSorting(false)
 {
     //  Set the window to close when the close button is clicked
     window.setFramerateLimit(60);
 
-    BAR_WIDTH = window.getSize().x / ARRAY_SIZE;
+    BAR_WIDTH = (window.getSize().x / ARRAY_SIZE);
     SCREEN_HEIGHT = window.getSize().y;
-    PIXELS = SCREEN_HEIGHT / ARRAY_SIZE;
+    PIXELS = (SCREEN_HEIGHT / ARRAY_SIZE) - 10;
 
     randomArrayGenreator();
 }
 
+// FIXME: timer not working properly!
 void Visualizer::run()
 {
-    //  print the shuffled numbers
-    // DEBUGGING STUFF START
+    sf::Clock timer;
+
     std::cout << "Unsorted: ";
     for (auto n : arr)
     {
         std::cout << n << " ";
     }
-    // std::cout << std::endl;
-    std::cout << "\nArray size: " << arr.size() << std::endl;
-    // DEBUGGING STUFF END
+    std::cout << std::endl;
 
     while (window.isOpen())
     {
@@ -38,6 +37,8 @@ void Visualizer::run()
             {
                 if (event.key.code == sf::Keyboard::B)
                 {
+                    // timer.restart();
+                    displayTime(timer, "Bubble Sort\n");
                     bubbleSort();
                     std::cout << "Sorted: ";
                     for (auto n : arr)
@@ -48,6 +49,8 @@ void Visualizer::run()
                 }
                 if (event.key.code == sf::Keyboard::S)
                 {
+                    timer.restart();
+                    // displayTime("Selection Sort\n");
                     selectionSort();
                     std::cout << "Sorted: ";
                     for (auto n : arr)
@@ -58,6 +61,8 @@ void Visualizer::run()
                 }
                 if (event.key.code == sf::Keyboard::I)
                 {
+                    timer.restart();
+                    // displayTime("Insertion Sort\n");
                     insertionSort();
                     std::cout << "Sorted: ";
                     for (auto n : arr)
@@ -68,7 +73,16 @@ void Visualizer::run()
                 }
                 if (event.key.code == sf::Keyboard::R)
                 {
+                    timer.restart();
+                    // displayTime("<Algorithm_Name>\n");
                     randomArrayGenreator();
+                    std::cout << "Unsorted: ";
+                    for (auto n : arr)
+                    {
+                        std::cout << n << " ";
+                    }
+                    std::cout << std::endl;
+                    std::cout << std::endl;
                 }
                 else if (event.key.code == sf::Keyboard::Escape)
                 {
@@ -76,24 +90,33 @@ void Visualizer::run()
                 }
             }
         }
+
+        // displayTime(timer, "");
+
+        // displayTime("<Algorithm_Name>\n");
+        window.clear();
         drawArray();
+        // window.draw(text);
+        window.display();
     }
 }
 
 void Visualizer::drawArray()
 {
     window.clear(sf::Color::Black);
+
     for (auto &pole : bars)
     {
         window.draw(pole.second);
     }
+    window.draw(text);
     window.display();
 }
 
 void Visualizer::drawBar()
 {
     bars.clear();
-    for (size_t index = 0; index < ARRAY_SIZE; index++)
+    for (int index = 0; index < ARRAY_SIZE; index++)
     {
         sf::RectangleShape rectangle(sf::Vector2f(BAR_WIDTH - GAP, arr[index] * PIXELS));
         rectangle.setOutlineThickness(0.5);
@@ -120,6 +143,7 @@ void Visualizer::bubbleSort()
             bars[current].setFillColor(LIGHTBLUE);
             bars[current + 1].setFillColor(LIGHTBLUE);
 
+            // displayTime("Bubble Sort \n");
             // draw the array
             drawArray();
 
@@ -167,6 +191,7 @@ void Visualizer::selectionSort()
     int minIndex;
     for (int i = 0; i < ARRAY_SIZE - 1; i++)
     {
+        // displayTime("Selection Sort\n");
         // Assume that the first index is the minimum value
         minIndex = i;
 
@@ -219,6 +244,8 @@ void Visualizer::insertionSort()
 {
     for (int i = 1; i < ARRAY_SIZE; i++)
     {
+        // displayTime("Insertion Sort\n");
+
         int key = arr[i];
         int j = i - 1;
 
@@ -261,8 +288,10 @@ void Visualizer::insertionSort()
     greenSwoop();
 }
 
-void Visualizer::mergeSort(std::vector<int>) {
-    if (arr.size()  == 0 || arr.size() == 1) {
+void Visualizer::mergeSort(std::vector<int>)
+{
+    if (arr.size() == 0 || arr.size() == 1)
+    {
         return;
     }
 }
@@ -292,7 +321,7 @@ void Visualizer::randomArrayGenreator()
 {
     // remove the old numbers
     arr.clear();
-    //  Fill the vector with numbers from 1 to ARRAY_SIZE 
+    //  Fill the vector with numbers from 1 to ARRAY_SIZE
     for (int i = 1; i <= ARRAY_SIZE; i++)
     {
         arr.push_back(i);
@@ -302,4 +331,25 @@ void Visualizer::randomArrayGenreator()
     //  randomize the numbers
     std::random_shuffle(arr.begin(), arr.end());
     drawBar();
+}
+
+void Visualizer::displayTime(sf::Clock clock, std::string algoName)
+{
+    if (!font.loadFromFile("arial.ttf"))
+    {
+        std::cerr << "Error! Font not found." << std::endl;
+        exit(1);
+    }
+    text.setFont(font);
+    text.setCharacterSize(30);
+    text.setFillColor(sf::Color::White);
+    text.setPosition(10, 10);
+    text.setString("Time: ");
+
+    // Update elapsed time
+    sf::Time elapsed = clock.getElapsedTime();
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(3);
+    oss << "Time: " << elapsed.asSeconds() << "s";
+    text.setString(algoName + oss.str());
 }

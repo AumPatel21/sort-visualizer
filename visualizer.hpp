@@ -5,7 +5,8 @@
 #include <vector>
 #include <algorithm>
 #include <utility>
-#include <chrono>
+#include <sstream>
+#include <iomanip>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
@@ -13,7 +14,7 @@
 class Visualizer
 {
 public:
-    Visualizer();
+    Visualizer(int arrSize);
     void run();
     void drawBar();
     void drawArray();
@@ -22,21 +23,26 @@ public:
     void insertionSort();
     void mergeSort(std::vector<int>);
     void quickSort();
+
 private:
     void greenSwoop();
     void randomArrayGenreator();
-    sf::RenderWindow window;
-    sf::Clock clock;
-    std::vector<int> arr;
+    void displayTime(sf::Clock timer, std::string algoName);
 
+    sf::RenderWindow window;
+    // sf::Clock clock;
+    sf::Text text;
+    sf::Font font;
+    std::vector<int> arr;
     std::unordered_map<int, sf::RectangleShape> bars;
 
-    static const int ARRAY_SIZE = 10;
+    int ARRAY_SIZE = 10;
     int BAR_WIDTH;
     int SCREEN_HEIGHT;
     int PIXELS;
-    const int GAP = 1; // jsut to keep some gap between the poles
+    const int GAP = 1; // just to keep some gap between the bars
     const int sleepTime = 100;
+    bool isSorting;
 
     // custom colors
     sf::Color LIGHTBLUE = sf::Color(26, 117, 159);
